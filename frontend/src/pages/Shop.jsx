@@ -1,0 +1,64 @@
+import React, { useEffect, useState } from 'react';
+import ProductCard from '../components/ProductCard';
+import '../styles/product.css';
+import { apiFetch } from '../api';
+
+const Shop = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await apiFetch('/api/products');
+        const data = await res.json();
+        console.log('Shop fetch /api/products', { status: res.status, data });
+        if (!res.ok) {
+          throw new Error(data?.message || 'Failed to load products');
+        }
+        if (!Array.isArray(data)) {
+          throw new Error('Unexpected products response format');
+        }
+        setProducts(data);
+      } catch (error) {
+        console.error('Shop failed:', error);
+        setError(error.message || 'Unable to load products.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div className="shop-container">
+      <h2>All Products</h2>
+      <input 
+        type="text" 
+        placeholder="Search products..." 
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="search-bar"
+      />
+      {loading ? (
+        <div>Loading...</div>
+      ) : error ? (
+        <div style={{ color: '#f97316' }}>{error}</div>
+      ) : filteredProducts.length === 0 ? (
+        <div>No products match your search.</div>
+      ) : (
+        <div className="product-grid">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Shop;
