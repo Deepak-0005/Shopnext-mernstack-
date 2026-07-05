@@ -27,22 +27,16 @@ app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/build')))
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
 
-  app.get('*', (req, res) =>
+  app.get((req, res) =>
     res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'))
-  )
+  );
 } else {
   app.get('/', (req, res) => {
-    res.send('ShopNest API is running in Development mode...')
-  })
+    res.send('ShopNest API is running in Development mode...');
+  });
 }
-
-
-
-
-
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
