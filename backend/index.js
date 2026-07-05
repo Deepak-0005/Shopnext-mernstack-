@@ -1,4 +1,5 @@
 const express = require("express");
+const path=require("path");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -16,9 +17,6 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.get("/", (req, res) => {
-    res.send("shopnext backend is running");
-});
 app.get("/", (req, res) => {
     res.send("shopnext backend is running");
 });
